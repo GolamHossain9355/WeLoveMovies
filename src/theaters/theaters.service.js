@@ -7,18 +7,14 @@ function readAllMoviesInTheater(theater_id) {
     .where({ "mt.theater_id": theater_id });
 }
 
-async function addMoviesArray(theaters) {
-  const data = await Promise.all(
-    theaters.map(async (theater) => {
-      theater.movies = await readAllMoviesInTheater(theater.theater_id);
-      return theater;
-    })
-  );
-  return data;
+async function addMoviesArray(theater) {
+  theater.movies = await readAllMoviesInTheater(theater.theater_id);
+  return theater;
 }
 
-function list() {
-  return knex("theaters").select();
+async function list() {
+  const theaters = await knex("theaters").select();
+  return await Promise.all(theaters.map(addMoviesArray));
 }
 
 function listTheatersForMovie(movieId) {

@@ -9,28 +9,19 @@ async function addCritic(review) {
   return review;
 }
 
-function listReviewsForMovie(movieId) {
-  return knex("reviews as r")
-    .join("critics as c", "r.critic_id", "c.critic_id")
-    .select(
-      "*",
-      "r.created_at as created_at_reviews",
-      "r.updated_at as updated_at_reviews",
-      "r.critic_id as critic_id_reviews"
-    )
-    .where({ "r.movie_id": movieId });
+async function listReviewsForMovie(movie_id) {
+  const reviews = await knex("reviews").where({ movie_id });
+  return await Promise.all(reviews.map(addCritic));
 }
 
 function read(review_id) {
   return knex("reviews").where({ review_id }).first();
 }
 
-function update(updatedData, review_id) {
-  return knex("reviews")
-    .where({ review_id })
-    .update(updatedData, "*")
-    .then(() => read(review_id))
-    .then(addCritic);
+async function update(updatedData, review_id) {
+  await knex("reviews").where({ review_id }).update(updatedData, "*");
+  const review = await read(review_id);
+  return addCritic(review);
 }
 
 function destroy(review_id) {
@@ -44,3 +35,15 @@ module.exports = {
   update,
   delete: destroy,
 };
+
+// function listReviewsForMovie(movieId) {
+//   return knex("reviews as r")
+//     .join("critics as c", "r.critic_id", "c.critic_id")
+//     .select(
+//       "*",
+//       "r.created_at as created_at_reviews",
+//       "r.updated_at as updated_at_reviews",
+//       "r.critic_id as critic_id_reviews"
+//     )
+//     .where({ "r.movie_id": movieId });
+// }

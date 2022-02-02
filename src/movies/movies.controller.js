@@ -2,7 +2,6 @@ const service = require("./movies.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 async function movieExists(req, res, next) {
-  // const movie = await service.read(req.params.movieId);
   const { movieId } = req.params;
   const foundMovie = await service.read(movieId);
   if (!foundMovie) {
@@ -18,7 +17,7 @@ async function movieExists(req, res, next) {
 async function list(req, res, _next) {
   const { is_showing } = req.query;
 
-  if (is_showing && is_showing === "true") {
+  if (is_showing === "true") {
     const data = await service.listIsShowing();
     res.status(200).json({ data });
   }

@@ -1,16 +1,6 @@
 const service = require("./reviews.service");
 
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
-const mapProperties = require("../utils/map-properties");
-
-const addCategory = mapProperties({
-  critic_id: "critic.critic_id",
-  preferred_name: "critic.preferred_name",
-  surname: "critic.surname",
-  organization_name: "critic.organization_name",
-  created_at: "critic.created_at",
-  updated_at: "critic.updated_at",
-});
 
 async function reviewExists(req, res, next) {
   const { reviewId } = req.params;
@@ -26,10 +16,7 @@ async function reviewExists(req, res, next) {
 
 async function listReviewsForMovie(req, res, _next) {
   const { movieId } = req.params;
-
-  const arrayData = await service.listReviewsForMovie(movieId);
-  const data = arrayData.map((addCategory));
-
+  const data = await service.listReviewsForMovie(movieId);
   res.status(200).json({ data });
 }
 
@@ -51,3 +38,23 @@ module.exports = {
   update: [reviewExists, asyncErrorBoundary(update)],
   delete: [reviewExists, asyncErrorBoundary(destroy)],
 };
+
+// const mapProperties = require("../utils/map-properties");
+
+// const addCategory = mapProperties({
+//   critic_id: "critic.critic_id",
+//   preferred_name: "critic.preferred_name",
+//   surname: "critic.surname",
+//   organization_name: "critic.organization_name",
+//   created_at: "critic.created_at",
+//   updated_at: "critic.updated_at",
+// });
+
+// async function listReviewsForMovie(req, res, _next) {
+//   const { movieId } = req.params;
+
+//   const arrayData = await service.listReviewsForMovie(movieId);
+//   const data = arrayData.map((addCategory));
+
+//   res.status(200).json({ data });
+// }
